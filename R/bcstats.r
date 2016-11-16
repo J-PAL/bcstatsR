@@ -9,11 +9,29 @@
 #' @return A data.frame with the error rates
 
 #' @export
-bcstats = function(surveydata,
+bcstats <- function(surveydata,
                    bcdata,
                    id,
                    t1vars,
                    t2vars,
                    t3vars) {
-    merge(surveydata, bcdata, by = id)
+
+    # Check if data.frames contain the variables specified
+    stopifnot(id     %in% names(surveydata),
+              id     %in% names(bcdata),
+              t1vars %in% names(surveydata),
+              t1vars %in% names(bcdata),
+              t2vars %in% names(surveydata),
+              t2vars %in% names(bcdata),
+              t3vars %in% names(surveydata),
+              t3vars %in% names(bcdata))
+
+    merged.df <- merge(surveydata,
+                       bcdata,
+                       by  = id,
+                       all = TRUE,
+                       suffixes = c(".s",".b"))
+
 }
+
+# http://codereview.stackexchange.com/questions/94253/identify-changes-between-two-data-frames-explain-deltas-for-x-columns
