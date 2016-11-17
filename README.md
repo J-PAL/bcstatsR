@@ -16,7 +16,7 @@ library(bcstatsR)
 
 # Create a toy example of datasets to compare
 data(iris)
-first_survey  <- iris
+first_survey <- iris
 first_survey$id <- seq(1, nrow(first_survey))
 second_survey <- first_survey
 second_survey[second_survey$id %in% c(1, 6, 7, 9), "Sepal.Width"] <- 100
