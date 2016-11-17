@@ -10,28 +10,21 @@
 
 #' @export
 bcstats <- function(surveydata,
-                   bcdata,
-                   id,
-                   t1vars,
-                   t2vars,
-                   t3vars) {
+                    bcdata,
+                    id,
+                    t1vars = NA,
+                    t2vars = NA,
+                    t3vars = NA) {
 
-    # Check if data.frames contain the variables specified
-    stopifnot(id     %in% names(surveydata),
-              id     %in% names(bcdata),
-              t1vars %in% names(surveydata),
-              t1vars %in% names(bcdata),
-              t2vars %in% names(surveydata),
-              t2vars %in% names(bcdata),
-              t3vars %in% names(surveydata),
-              t3vars %in% names(bcdata))
+    merged.df <- merge(melt(surveydata, id = "id"),
+                       melt(bcdata,     id = "id"),
+                       by       = c("id",      "variable"),
+                       suffixes = c(".survey", ".back_check"))
 
-    merged.df <- merge(surveydata,
-                       bcdata,
-                       by  = id,
-                       all = TRUE,
-                       suffixes = c(".s",".b"))
-
+    merged.df$type                                 <- ""
+    merged.df$type[merged.df$variable %in% t1vars] <- "Type 1"
+    merged.df$type[merged.df$variable %in% t2vars] <- "Type 2"
+    merged.df$type[merged.df$variable %in% t3vars] <- "Type 3"
+    return(merged.df[which(merged.df$value.survey != merged.df$value.back_check),
+                     c("id", "type", "variable", "value.survey", "value.back_check")])
 }
-
-# http://codereview.stackexchange.com/questions/94253/identify-changes-between-two-data-frames-explain-deltas-for-x-columns
