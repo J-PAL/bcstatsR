@@ -1,4 +1,4 @@
-#' Join two data frames together 
+#' Comparing "back checks" in R (a clone of Stata's bcstats)
 #' 
 #' @param surveydata The survey data
 #' @param bcdata The back check data
