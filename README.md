@@ -11,6 +11,9 @@ devtools::install_github('vikjam/bcstatsR')
 
 ### Use
 ```
+# Load bcstatsR
+library(bcstatsR)
+
 # Create a toy example of datasets to compare
 data(iris)
 first_survey  <- iris
