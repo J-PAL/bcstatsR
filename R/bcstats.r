@@ -16,9 +16,9 @@ bcstats <- function(surveydata,
                     t2vars = NA,
                     t3vars = NA) {
 
-    merged.df <- merge(melt(surveydata, id = "id"),
-                       melt(bcdata,     id = "id"),
-                       by       = c("id",      "variable"),
+    merged.df <- merge(melt(surveydata, id = id),
+                       melt(bcdata,     id = id),
+                       by       = c(id,        "variable"),
                        suffixes = c(".survey", ".back_check"))
 
     merged.df$type                                 <- ""
@@ -26,5 +26,5 @@ bcstats <- function(surveydata,
     merged.df$type[merged.df$variable %in% t2vars] <- "Type 2"
     merged.df$type[merged.df$variable %in% t3vars] <- "Type 3"
     return(merged.df[which(merged.df$value.survey != merged.df$value.back_check),
-                     c("id", "type", "variable", "value.survey", "value.back_check")])
+                     c(id, "type", "variable", "value.survey", "value.back_check")])
 }
