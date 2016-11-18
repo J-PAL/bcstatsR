@@ -4,7 +4,8 @@ Version: 0.0.0.9000
 Authors@R: person("Vikram", "Jambulapati", email = "vikjam@mit.edu", role = c("aut", "cre"))
 Description: Comparing "back checks" in R (a clone of Stata's bcstats)
 Depends:
-    R (>= 3.3.1)
+    R (>= 3.3.1),
+    reshape2
 License: MIT License
 Encoding: UTF-8
 LazyData: true
