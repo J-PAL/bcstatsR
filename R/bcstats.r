@@ -12,19 +12,57 @@
 bcstats <- function(surveydata,
                     bcdata,
                     id,
-                    t1vars = NA,
-                    t2vars = NA,
-                    t3vars = NA) {
+                    t1vars   = NA,
+                    t2vars   = NA,
+                    t3vars   = NA,
+                    ttest    = NA,
+                    signrank = NA) {
 
-    merged.df <- merge(melt(surveydata, id = id),
-                       melt(bcdata,     id = id),
-                       by       = c(id,        "variable"),
-                       suffixes = c(".survey", ".back_check"))
+    results  <- list(back_check = NA,
+                     ttest      = vector("list"),
+                     signrank   = vector("list"))
+    pairwise <- merge(melt(surveydata, id = id),
+                      melt(bcdata,     id = id),
+                      by       = c(id,        "variable"),
+                      suffixes = c(".survey", ".back_check"))
 
-    merged.df$type                                 <- ""
-    merged.df$type[merged.df$variable %in% t1vars] <- "Type 1"
-    merged.df$type[merged.df$variable %in% t2vars] <- "Type 2"
-    merged.df$type[merged.df$variable %in% t3vars] <- "Type 3"
-    return(merged.df[which(merged.df$value.survey != merged.df$value.back_check),
-                     c(id, "type", "variable", "value.survey", "value.back_check")])
+    pairwise$type                                <- ""
+    pairwise$type[pairwise$variable %in% t1vars] <- "Type 1"
+    pairwise$type[pairwise$variable %in% t2vars] <- "Type 2"
+    pairwise$type[pairwise$variable %in% t3vars] <- "Type 3"
+
+    # Create a logical value for whether or not the entry contains an error
+    pairwise$equal <- pairwise$value.survey == pairwise$value.back_check
+    
+    # Restrict the data to cases where there is an error
+    back_check <- pairwise[which(pairwise$equal != TRUE),
+                           c(id,
+                           "type",
+                           "variable",
+                           "value.survey",
+                           "value.back_check")]
+    results$back_check <- back_check
+
+    # Run the t-tests
+    if (!is.na(ttest)) {
+        for (var in ttest) {
+            pairwise.var         <- pairwise[which(pairwise$variable == var),  ]
+            results$ttest[[var]] <- t.test(pairwise.var$value.survey,
+                                           pairwise.var$value.back_check,
+                                           paired = TRUE)    
+        }
+    }
+
+    # Run the Wilcoxon signed rank test
+    if (!is.na(signrank)) {
+        for (var in signrank) {
+            pairwise.var            <- pairwise[which(pairwise$variable == var),  ]
+            results$signrank[[var]] <- wilcox.test(pairwise.var$value.survey,
+                                                   pairwise.var$value.back_check,
+                                                   paired = TRUE)    
+        }
+    }
+
+    # Return the results
+    return(results)
 }
