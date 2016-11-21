@@ -6,6 +6,8 @@ Description: Comparing "back checks" in R (a clone of Stata's bcstats)
 Depends:
     R (>= 3.3.1),
     reshape2
+Suggests:
+	testthat
 License: MIT License
 Encoding: UTF-8
 LazyData: true
