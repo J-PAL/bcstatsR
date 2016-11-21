@@ -126,8 +126,8 @@ bcstats <- function(surveydata,
     } else {
         for (var in ttest) {
             pairwise.var         <- pairwise[which(pairwise$variable == var),  ]
-            results$ttest[[var]] <- t.test(pairwise.var$value.survey,
-                                           pairwise.var$value.back_check,
+            results$ttest[[var]] <- t.test(as.numeric(pairwise.var$value.survey),
+                                           as.numeric(pairwise.var$value.back_check),
                                            paired     = TRUE,
                                            conf.level = level)    
         }
@@ -139,8 +139,8 @@ bcstats <- function(surveydata,
     } else {
         for (var in signrank) {
             pairwise.var            <- pairwise[which(pairwise$variable == var),  ]
-            results$signrank[[var]] <- wilcox.test(pairwise.var$value.survey,
-                                                   pairwise.var$value.back_check,
+            results$signrank[[var]] <- wilcox.test(as.numeric(pairwise.var$value.survey),
+                                                   as.numeric(pairwise.var$value.back_check),
                                                    paired = TRUE)    
         }
     }
@@ -158,19 +158,24 @@ bcstats <- function(surveydata,
       results.by.group <- list(summary = NA,
                                each    = NA)
 
-      pairwise$error[pairwise$type == error.type] <- FALSE
+      pairwise  <- pairwise[which(pairwise$type == error.type), ]
 
       summary   <- aggregate(pairwise[ , c("error")],
                              by  = list(pairwise[[group.id]]),
-                             FUN = mean)
+                             FUN = function(x) c(error.rate  = mean(x),
+                                                 differences = sum(x), 
+                                                 total       = length(x)))
       each      <- aggregate(pairwise[ , c("error")],
                              by  = list(pairwise[[group.id]],
                                         pairwise$variable),
-                             FUN = mean)
-
+                             FUN = function(x) c(error.rate  = mean(x),
+                                                 differences = sum(x), 
+                                                 total       = length(x)))
       # Name the columns
-      names(summary) <- c(group.id, "error.rate")
-      names(each)    <- c(group.id, "variable", "error.rate")
+      summary        <- as.data.frame(as.list(summary))
+      each           <- as.data.frame(as.list(each))
+      names(summary) <- c(group.id, "error.rate", "differences", "total")
+      names(each)    <- c(group.id, "variable", "error.rate", "differences", "total")
 
       # Export results
       results.by.group$summary <- summary
