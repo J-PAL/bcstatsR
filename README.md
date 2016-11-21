@@ -28,7 +28,7 @@ compute.bc <- bcstats(surveydata = survey,
                       enumerator = "enum",
                       ttest      = "itemssold")
 
-print(compute.bc$back_check, row.names = FALSE)
+print(compute.bc$back_check)
 ```
 You should see a list of all the differences 
 ```
