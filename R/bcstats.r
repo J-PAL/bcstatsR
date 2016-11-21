@@ -14,6 +14,7 @@
 #' @param upper convert all string variables to upper case before comparing
 #' @param nosymbol replace symbols with spaces in string variables before comparing
 #' @param trim remove leading or trailing blanks and multiple, consecutive internal blanks in string variables before comparing
+#' @param okrange do not count a value in list in the back check data as a difference if it falls within range of the survey data
 #' @return A list constaining the back check as a data.frame, error rates by groups, and tests for differences
 
 #' @export
@@ -30,7 +31,8 @@ bcstats <- function(surveydata,
                     lower      = FALSE,
                     upper      = FALSE,
                     nosymbol   = FALSE,
-                    trim       = FALSE) {
+                    trim       = FALSE,
+                    okrange    = NA) {
 
     # Create list that will store all the results
     results  <- list(back_check = NA,
@@ -68,7 +70,19 @@ bcstats <- function(surveydata,
     pairwise$error <- !(pairwise$error %in% FALSE)
 
     # Type 3 variables do not have errors
-    pairwise$error[pairwise$variable == "Type 3"] <- FALSE
+    pairwise$error[pairwise$type == "Type 3"] <- FALSE
+
+    # No error for variables within okrange
+    if (!is.na(okrange)) {
+      for (name in names(okrange)) {
+        ok.var   <- pairwise[which(pairwise$variable == name), ]
+        ok.min   <- okrange[[var]][1]
+        ok.max   <- okrange[[var]][2]
+        ok.check <- ok.var$value.back_check      >= ok.var$value.survey - ok.mmin &&
+                    ok.var$value.survey + ok.max >= ok.var$value.back_check
+        pairwise[which(pairwise$variable == name), ]$error <- ok.check
+      }
+    }
     
     # Identifiers
     id_vars <- c(id, enumerator)
