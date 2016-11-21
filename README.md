@@ -14,23 +14,50 @@ devtools::install_github('vikjam/bcstatsR')
 # Load bcstatsR
 library(bcstatsR)
 
-# Create a toy example of datasets to compare
-data(iris)
-first_survey <- iris
-first_survey$id <- seq(1, nrow(first_survey))
-second_survey <- first_survey
-second_survey[second_survey$id %in% c(1, 6, 7, 9), "Sepal.Width"] <- 100
+# Load a toy example that comes with bcstatsR
+data(survey)
+data(bc)
 
 # Compare the differences with bcstats
-back_check <- bcstats(surveydata = first_survey, bcdata = second_survey, id = "id", t1vars = c("Sepal.Width"))
-print(back_check, row.names = FALSE)
+compute.bc <- bcstats(surveydata = survey,
+                      bcdata     = bc,
+                      id         = "id",
+                      t1vars     = "gender",
+                      t2vars     = "gameresult",
+                      t3vars     = "itemssold",
+                      enumerator = "enum",
+                      ttest      = "itemssold")
+
+print(compute.bc$back_check, row.names = FALSE)
 ```
-You should see a list of all the differences
+You should see a list of all the differences 
 ```
-id   type    variable value.survey value.back_check
- 1 Type 1 Sepal.Width          3.5              100
- 6 Type 1 Sepal.Width          3.9              100
- 7 Type 1 Sepal.Width          3.4              100
- 9 Type 1 Sepal.Width          2.9              100
+   id   enum   type   variable value.survey value.back_check
+1   1   hana Type 2 gameresult           10             <NA>
+2   1   hana Type 3  itemssold            2             <NA>
+3   2   mark Type 1     gender       female                 
+4   2   mark Type 3  itemssold            7               10
+5   3   lisa Type 2 gameresult           12             <NA>
+6   3   lisa Type 3  itemssold            1             <NA>
+7   4    ife Type 2 gameresult           10             <NA>
+8   4    ife Type 3  itemssold            5             <NA>
+9   5   dean Type 1     gender       female                 
+10  5   dean Type 3  itemssold            3                5
+11  6  annie Type 2 gameresult           10             <NA>
+12  6  annie Type 1     gender                          male
+13  6  annie Type 3  itemssold            7             <NA>
+14  7   dean Type 1     gender       female                 
+15  8  annie Type 2 gameresult            7             <NA>
+16  8  annie Type 3  itemssold            3             <NA>
+17  9 brooke Type 1     gender       female                 
+18 10 brooke Type 2 gameresult           14             <NA>
+19 10 brooke Type 3  itemssold            1             <NA>
+20 11   lisa Type 1     gender       female                 
+21 12   hana Type 1     gender       female                 
+22 12   hana Type 3  itemssold            3                6
+23 13  mateo Type 2 gameresult           14             <NA>
+24 13  mateo Type 3  itemssold            1             <NA>
+25 14  rohit Type 2 gameresult           11               14
+26 14  rohit Type 1     gender       female                 
 ```
 
