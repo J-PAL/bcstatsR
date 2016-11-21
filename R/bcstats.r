@@ -32,7 +32,8 @@ bcstats <- function(surveydata,
                     upper      = FALSE,
                     nosymbol   = FALSE,
                     trim       = FALSE,
-                    okrange    = NA) {
+                    okrange    = NA,
+                    exclude    = NA) {
 
     # Create list that will store all the results
     results  <- list(back_check = NA,
@@ -81,6 +82,14 @@ bcstats <- function(surveydata,
         ok.check <- ok.var$value.back_check      >= ok.var$value.survey - ok.mmin &&
                     ok.var$value.survey + ok.max >= ok.var$value.back_check
         pairwise[which(pairwise$variable == name), ]$error <- ok.check
+      }
+    }
+
+    # No error for excluded group
+    if (!is.na(exclude)) {
+      for (name in names(exclude)) {
+        pairwise$error[which(pairwise$variable == name &
+                             pairwise$value.survey %in% )] <- TRUE
       }
     }
     
