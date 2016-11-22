@@ -28,11 +28,11 @@ compute.bc <- bcstats(surveydata = survey,
                       enumerator = "enum",
                       ttest      = "itemssold")
 
-print(compute.bc$back_check)
+print(compute.bc$backcheck)
 ```
 You should see a list of all the differences 
 ```
-   id   enum   type   variable value.survey value.back_check
+   id   enum   type   variable value.survey value.backcheck
 1   1   hana Type 2 gameresult           10             <NA>
 2   1   hana Type 3  itemssold            2             <NA>
 3   2   mark Type 1     gender       female                 
