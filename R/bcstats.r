@@ -4,16 +4,20 @@
 #' @param bcdata The back check data
 #' @param id The unique ID
 #' @param enumerator Display enumerators with high error rates and variables with high error rates for those enumerators
+#' @param enumteam Display the overall error rates of all enumerator teams
 #' @param t1vars The list of "type 1" variables
 #' @param t2vars The list of "type 2" variables
 #' @param t3vars The list of "type 3" variables
 #' @param ttest Run paired two-sample mean-comparison tests for varlist in the back check and survey data using ttest
 #' @param level Set confidence level for ttest; default is 0.95
 #' @param signrank Run Wilcoxon matched-pairs signed-ranks tests in the back check and survey data using signrank
-#' @param lower convert all string variables to lower case before comparing
-#' @param upper convert all string variables to upper case before comparing
-#' @param nosymbol replace symbols with spaces in string variables before comparing
-#' @param trim remove leading or trailing blanks and multiple, consecutive internal blanks in string variables before comparing
+#' @param lower Convert all string variables to lower case before comparing
+#' @param upper Convert all string variables to upper case before comparing
+#' @param nosymbol Replace symbols with spaces in string variables before comparing
+#' @param trim Remove leading or trailing blanks and multiple, consecutive internal blanks in string variables before comparing
+#' @param okrange Do not count a value in list in the back check data as a difference if it falls within range of the survey data
+#' @param exclude Specifies that back check responses that equal values in list will not be compared. These responses will not affect error rates and will not appear in the comparisons data set.  Used when the back check data set contains data for multiple back check survey versions.
+
 #' @return A list constaining the back check as a data.frame, error rates by groups, and tests for differences
 
 #' @export
@@ -21,6 +25,7 @@ bcstats <- function(surveydata,
                     bcdata,
                     id,
                     enumerator = NA,
+                    enumteam   = NA,
                     t1vars     = NA,
                     t2vars     = NA,
                     t3vars     = NA,
@@ -30,7 +35,9 @@ bcstats <- function(surveydata,
                     lower      = FALSE,
                     upper      = FALSE,
                     nosymbol   = FALSE,
-                    trim       = FALSE) {
+                    trim       = FALSE,
+                    okrange    = NA,
+                    exclude    = NA) {
 
     # Create list that will store all the results
     results  <- list(backcheck = NA,
@@ -72,7 +79,27 @@ bcstats <- function(surveydata,
 
     # Type 3 variables do not have errors
     pairwise$error[pairwise$variable == "Type 3"] <- FALSE
-    
+
+    # No error for variables within okrange
+    if (!is.na(okrange)) {
+      for (name in names(okrange)) {
+        ok.var   <- pairwise[which(pairwise$variable == name), ]
+        ok.min   <- okrange[[var]][1]
+        ok.max   <- okrange[[var]][2]
+        ok.check <- ok.var$value.back_check      >= ok.var$value.survey - ok.mmin &&
+                    ok.var$value.survey + ok.max >= ok.var$value.back_check
+        pairwise[which(pairwise$variable == name), ]$error <- ok.check
+      }
+    }
+
+    # No error for excluded group
+    if (!is.na(exclude)) {
+      for (name in names(exclude)) {
+        pairwise$error[which(pairwise$variable == name &
+                             pairwise$value.survey %in% )] <- TRUE
+      }
+    }
+
     # Identifiers
     id_vars <- c(id, enumerator)
     id_vars <- id_vars[!is.na(id_vars)]
