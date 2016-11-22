@@ -43,7 +43,7 @@ bcstats <- function(surveydata,
                      enum1     = vector("list"),
                      enum2     = vector("list"),
                      enumteam1 = vector("list"),
-                     enumteam1 = vector("list"),
+                     enumteam2 = vector("list"),
                      ttest     = vector("list"),
                      signrank  = vector("list"))
 
@@ -83,10 +83,10 @@ bcstats <- function(surveydata,
     if (!is.na(okrange)) {
       for (name in names(okrange)) {
         ok.var   <- pairwise[which(pairwise$variable == name), ]
-        ok.min   <- okrange[[var]][1]
-        ok.max   <- okrange[[var]][2]
-        ok.check <- ok.var$value.back_check      >= ok.var$value.survey - ok.mmin &&
-                    ok.var$value.survey + ok.max >= ok.var$value.back_check
+        ok.min   <- okrange[[name]][1]
+        ok.max   <- okrange[[name]][2]
+        ok.check <- as.numeric(ok.var$value.back_check) >= as.numeric(ok.var$value.survey) - ok.min &&
+                    as.numeric(ok.var$value.survey) + ok.max >= as.numeric(ok.var$value.back_check)
         pairwise[which(pairwise$variable == name), ]$error <- ok.check
       }
     }
@@ -94,13 +94,13 @@ bcstats <- function(surveydata,
     # No error for excluded group
     if (!is.na(exclude)) {
       for (name in names(exclude)) {
-        pairwise$error[which(pairwise$variable == name &
-                             pairwise$value.survey %in% )] <- TRUE
+        pairwise$error[(pairwise$variable == name &
+                        pairwise$value.survey %in% exclude[[name]])] <- TRUE
       }
     }
 
     # Identifiers
-    id_vars <- c(id, enumerator)
+    id_vars <- c(id, enumerator, enumteam)
     id_vars <- id_vars[!is.na(id_vars)]
 
     # Merge back in identifiers
@@ -129,20 +129,20 @@ bcstats <- function(surveydata,
 
     groups <- list(enum1     = c(enumerator, is.na(t1vars), "Type 1"),
                    enum2     = c(enumerator, is.na(t2vars), "Type 2"),
-                   enumteam1 = c(enumerator, is.na(t1vars), "Type 1"),
-                   enumteam2 = c(enumerator, is.na(t2vars), "Type 2"))
+                   enumteam1 = c(enumteam, is.na(t1vars), "Type 1"),
+                   enumteam2 = c(enumteam, is.na(t2vars), "Type 2"))
 
     for (name in names(groups)) {
       group.name  <- groups[[name]][1]
-      is.vars     <- groups[[name]][2]
+      isna.vars   <- as.logical(groups[[name]][2])
       group.error <- groups[[name]][3]
 
-      if (is.na(group.name) | is.vars) {
+      if (is.na(group.name) | isna.vars) {
         results[[name]] <- NULL
       } else {
         calc.error.by.group     <- .calc.error.by.group(pairwise   = pairwise,
                                                         id         = id,
-                                                        group.id   = enumerator,
+                                                        group.id   = group.name,
                                                         error.type = group.error)
         results[[name]]$summary <- calc.error.by.group$summary
         results[[name]]$each    <- calc.error.by.group$each        

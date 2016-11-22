@@ -14,9 +14,8 @@ devtools::install_github('vikjam/bcstatsR')
 # Load bcstatsR
 library(bcstatsR)
 
-# Load a toy example that comes with bcstatsR
-data(survey)
-data(bc)
+# Load a toy example bundled with bcstatsR
+data(survey, bc)
 
 # Compare the differences with bcstats
 compute.bc <- bcstats(surveydata = survey,

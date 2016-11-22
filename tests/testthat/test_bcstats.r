@@ -46,10 +46,10 @@ stata_raw <- 'id,enum,type,variable,survey,back_check
               12,"hana","type 3","itemssold","3","6"
               13,"mateo","type 3","itemssold","1","."'
 
-csv.con          <- textConnection(stata_raw)
+csv.con         <- textConnection(stata_raw)
 stata.backcheck <- read.csv(csv.con,
-                             quote            = "",
-                             stringsAsFactors = FALSE)
+                            quote            = "",
+                            stringsAsFactors = FALSE)
 close(csv.con)
 
 compare(stata.backcheck,
