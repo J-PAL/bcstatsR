@@ -33,11 +33,13 @@ bcstats <- function(surveydata,
                     trim       = FALSE) {
 
     # Create list that will store all the results
-    results  <- list(back_check = NA,
-                     enum1      = vector("list"),
-                     enum2      = vector("list"),
-                     ttest      = vector("list"),
-                     signrank   = vector("list"))
+    results  <- list(backcheck = NA,
+                     enum1     = vector("list"),
+                     enum2     = vector("list"),
+                     enumteam1 = vector("list"),
+                     enumteam1 = vector("list"),
+                     ttest     = vector("list"),
+                     signrank  = vector("list"))
 
     # Pre-process data when needed
     surveydata <- .bcstats.pre(pp.data  = surveydata,
@@ -45,6 +47,7 @@ bcstats <- function(surveydata,
                                upper    = upper,
                                trim     = trim,
                                nosymbol = nosymbol)
+
     bcdata     <- .bcstats.pre(pp.data  = bcdata,
                                lower    = lower,
                                upper    = upper,
@@ -54,17 +57,17 @@ bcstats <- function(surveydata,
     pairwise <- merge(melt(surveydata, id = id),
                       melt(bcdata,     id = id),
                       by       = c(id,        "variable"),
-                      suffixes = c(".survey", ".back_check"))
+                      suffixes = c(".survey", ".backcheck"))
 
     # Categorize error types
     pairwise$type                                <- ""
     pairwise$type[pairwise$variable %in% t1vars] <- "Type 1"
     pairwise$type[pairwise$variable %in% t2vars] <- "Type 2"
     pairwise$type[pairwise$variable %in% t3vars] <- "Type 3"
-    pairwise                                     <- pairwise[which(pairwise$type != ""),]
+    pairwise                                     <- pairwise[which(pairwise$type != ""), ]
 
     # Create a logical value for whether or not the entry contains an error
-    pairwise$error <- pairwise$value.survey != pairwise$value.back_check
+    pairwise$error <- pairwise$value.survey != pairwise$value.backcheck
     pairwise$error <- !(pairwise$error %in% FALSE)
 
     # Type 3 variables do not have errors
@@ -81,43 +84,43 @@ bcstats <- function(surveydata,
                       by  = id)
 
     # Restrict the data to cases where there is an error
-    back_check           <- pairwise[which(pairwise$error == TRUE),
+    backcheck           <- pairwise[which(pairwise$error == TRUE),
                                      c(id_vars,
                                        "type",
                                        "variable",
                                        "value.survey",
-                                       "value.back_check",
+                                       "value.backcheck",
                                        "error")]
-    rownames(back_check) <- NULL
-    # order_vars           <- c(id_vars, "type", "variable")
-    # back_check           <- back_check %>% arrange_(.dots = order_vars)
-    results$back_check   <- back_check[,
+    rownames(backcheck) <- NULL
+    # order_vars          <- c(id_vars, "type", "variable")
+    # backcheck           <- backcheck %>% arrange_(.dots = order_vars)
+    results$backcheck   <- backcheck[,
                                        c(id_vars,
                                          "type",
                                          "variable",
                                          "value.survey",
-                                         "value.back_check")]
+                                         "value.backcheck")]
 
-    if (is.na(enumerator) | is.na(t1vars)) {
-      results$enum1 <- NULL
-    } else {
-      calc.error.by.group        <- .calc.error.by.group(pairwise   = pairwise,
-                                                         id         = id,
-                                                         group.id   = enumerator,
-                                                         error.type = "Type 1")
-      results$enum1[["summary"]] <- calc.error.by.group$summary
-      results$enum1[["each"]]    <- calc.error.by.group$each
-    }
+    groups <- list(enum1     = c(enumerator, is.na(t1vars), "Type 1"),
+                   enum2     = c(enumerator, is.na(t2vars), "Type 2"),
+                   enumteam1 = c(enumerator, is.na(t1vars), "Type 1"),
+                   enumteam2 = c(enumerator, is.na(t2vars), "Type 2"))
 
-    if (is.na(enumerator) | is.na(t2vars)) {
-      results$enum2 <- NULL
-    } else {
-      calc.error.by.group        <- .calc.error.by.group(pairwise   = pairwise,
-                                                         id         = id,
-                                                         group.id   = enumerator,
-                                                         error.type = "Type 2")
-      results$enum2[["summary"]] <- calc.error.by.group$summary
-      results$enum2[["each"]]    <- calc.error.by.group$each
+    for (name in names(groups)) {
+      group.name  <- groups[[name]][1]
+      is.vars     <- groups[[name]][2]
+      group.error <- groups[[name]][3]
+
+      if (is.na(group.name) | is.vars) {
+        results[[name]] <- NULL
+      } else {
+        calc.error.by.group     <- .calc.error.by.group(pairwise   = pairwise,
+                                                        id         = id,
+                                                        group.id   = enumerator,
+                                                        error.type = group.error)
+        results[[name]]$summary <- calc.error.by.group$summary
+        results[[name]]$each    <- calc.error.by.group$each        
+      }
     }
 
     # Run the t-tests (if none specified remove from results)
@@ -127,7 +130,7 @@ bcstats <- function(surveydata,
         for (var in ttest) {
             pairwise.var         <- pairwise[which(pairwise$variable == var),  ]
             results$ttest[[var]] <- t.test(as.numeric(pairwise.var$value.survey),
-                                           as.numeric(pairwise.var$value.back_check),
+                                           as.numeric(pairwise.var$value.backcheck),
                                            paired     = TRUE,
                                            conf.level = level)    
         }
@@ -140,7 +143,7 @@ bcstats <- function(surveydata,
         for (var in signrank) {
             pairwise.var            <- pairwise[which(pairwise$variable == var),  ]
             results$signrank[[var]] <- wilcox.test(as.numeric(pairwise.var$value.survey),
-                                                   as.numeric(pairwise.var$value.back_check),
+                                                   as.numeric(pairwise.var$value.backcheck),
                                                    paired = TRUE)    
         }
     }
