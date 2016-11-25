@@ -16,36 +16,43 @@
 #' @param nosymbol Replace symbols with spaces in string variables before comparing
 #' @param trim Remove leading or trailing blanks and multiple, consecutive internal blanks in string variables before comparing
 #' @param okrange Do not count a value in list in the back check data as a difference if it falls within range of the survey data
-#' @param exclude Specifies that back check responses that equal values in list will not be compared. These responses will not affect error rates and will not appear in the comparisons data set.  Used when the back check data set contains data for multiple back check survey versions.
-#' @return A list constaining the back check as a data.frame, error rates by groups, and tests for differences
+#' @param nodiff  do not compare back check responses that equal # (for numeric variables) or string (for string variables)
+#' @param exclude Specifies that back check responses that equal values in list will not be compared. These responses will not affect error rates and will not appear in the comparisons data set.  Used when the back check data set contains data for multiple back check survey versions. 
+#' @return A named list constaining the back check as a data.frame, error rates by groups, and tests for differences
 
-#' @export
 bcstats <- function(surveydata,
                     bcdata,
                     id,
-                    enumerator = NA,
-                    enumteam   = NA,
-                    t1vars     = NA,
-                    t2vars     = NA,
-                    t3vars     = NA,
-                    ttest      = NA,
-                    level      = 0.95,
-                    signrank   = NA,
-                    lower      = FALSE,
-                    upper      = FALSE,
-                    nosymbol   = FALSE,
-                    trim       = FALSE,
-                    okrange    = NA,
-                    exclude    = NA) {
+                    enumerator  = NA,
+                    enumteam    = NA,
+                    backchecker = NA,
+                    bcteam      = NA,
+                    t1vars      = NA,
+                    t2vars      = NA,
+                    t3vars      = NA,
+                    ttest       = NA,
+                    level       = 0.95,
+                    signrank    = NA,
+                    lower       = FALSE,
+                    upper       = FALSE,
+                    nosymbol    = FALSE,
+                    trim        = FALSE,
+                    okrange     = NA,
+                    nodiff      = NA,
+                    exclude     = NA) {
 
     # Create list that will store all the results
-    results  <- list(backcheck = NA,
-                     enum1     = vector("list"),
-                     enum2     = vector("list"),
-                     enumteam1 = vector("list"),
-                     enumteam2 = vector("list"),
-                     ttest     = vector("list"),
-                     signrank  = vector("list"))
+    results  <- list(backcheck    = NA,
+                     enum1        = vector("list"),
+                     enum2        = vector("list"),
+                     enumteam1    = vector("list"),
+                     enumteam2    = vector("list"),
+                     backchecker1 = vector("list"),
+                     backchecker2 = vector("list"),
+                     bcteam1      = vector("list"),
+                     bcteam2      = vector("list"),
+                     ttest        = vector("list"),
+                     signrank     = vector("list"))
 
     # Pre-process data when needed
     surveydata <- .bcstats.pre(pp.data  = surveydata,
@@ -91,46 +98,67 @@ bcstats <- function(surveydata,
       }
     }
 
-    # No error for excluded group
-    if (!is.na(exclude)) {
-      for (name in names(exclude)) {
+    # No error for nodiff group
+    if (!is.na(nodiff)) {
+      for (name in names(nodiff)) {
         pairwise$error[(pairwise$variable == name &
-                        pairwise$value.survey %in% exclude[[name]])] <- TRUE
+                        pairwise$value.survey %in% nodiff[[name]])] <- TRUE
       }
     }
 
+    # Exclude some cases
+    if (!is.na(exclude)) {
+      for (name in names(exclude)) {
+        pairwise$type[(pairwise$variable == name &
+                       pairwise$value.survey %in% exclude[[name]])] <- ""
+      }
+      pairwise <- pairwise[which(pairwise$type != ""), ]
+    }
+
     # Identifiers
-    id_vars <- c(id, enumerator, enumteam)
-    id_vars <- id_vars[!is.na(id_vars)]
+    sid_vars <- c(id, enumerator, enumteam)
+    bid_vars <- c(id, backchecker, bcteam)
+    sid_vars <- sid_vars[!is.na(sid_vars)]
+    bid_vars <- bid_vars[!is.na(bid_vars)]
+    id_vars  <- c(sid_vars, bid_vars)
 
     # Merge back in identifiers
     pairwise <- merge(pairwise,
-                      surveydata[, id_vars],
+                      surveydata[, sid_vars],
+                      all = FALSE,
+                      by  = id)
+
+    pairwise <- merge(pairwise,
+                      bcdata[, bid_vars],
                       all = FALSE,
                       by  = id)
 
     # Restrict the data to cases where there is an error
     backcheck           <- pairwise[which(pairwise$error == TRUE),
-                                     c(id_vars,
-                                       "type",
-                                       "variable",
-                                       "value.survey",
-                                       "value.backcheck",
-                                       "error")]
+                                    c(id_vars,
+                                      "type",
+                                      "variable",
+                                      "value.survey",
+                                      "value.backcheck",
+                                      "error")]
     rownames(backcheck) <- NULL
     # order_vars          <- c(id_vars, "type", "variable")
     # backcheck           <- backcheck %>% arrange_(.dots = order_vars)
     results$backcheck   <- backcheck[,
-                                       c(id_vars,
-                                         "type",
-                                         "variable",
-                                         "value.survey",
-                                         "value.backcheck")]
+                                     c(id_vars,
+                                       "type",
+                                       "variable",
+                                       "value.survey",
+                                       "value.backcheck")]
 
-    groups <- list(enum1     = c(enumerator, is.na(t1vars), "Type 1"),
-                   enum2     = c(enumerator, is.na(t2vars), "Type 2"),
-                   enumteam1 = c(enumteam, is.na(t1vars), "Type 1"),
-                   enumteam2 = c(enumteam, is.na(t2vars), "Type 2"))
+    groups <- list(enum1        = c(enumerator,  is.na(t1vars), "Type 1"),
+                   enum2        = c(enumerator,  is.na(t2vars), "Type 2"),
+                   enumteam1    = c(enumteam,    is.na(t1vars), "Type 1"),
+                   enumteam2    = c(enumteam,    is.na(t2vars), "Type 2"),
+                   backchecker1 = c(backchecker, is.na(t1vars), "Type 1"),
+                   backchecker2 = c(backchecker, is.na(t2vars), "Type 2"),
+                   bcteam1      = c(bcteam,      is.na(t1vars), "Type 1"),
+                   bcteam2      = c(bcteam,      is.na(t2vars), "Type 2"))
 
     for (name in names(groups)) {
       group.name  <- groups[[name]][1]
@@ -189,22 +217,34 @@ bcstats <- function(surveydata,
 
       pairwise  <- pairwise[which(pairwise$type == error.type), ]
 
-      summary   <- aggregate(pairwise[ , c("error")],
+      if (is.na(group.id)) {
+        summary <- aggregate(pairwise[ , c("error")],
+                             by  = list(pairwise$variable),
+                             FUN = function(x) c(error.rate  = mean(x),
+                                                 differences = sum(x), 
+                                                 total       = length(x)))
+      } else {
+        summary <- aggregate(pairwise[ , c("error")],
                              by  = list(pairwise[[group.id]]),
                              FUN = function(x) c(error.rate  = mean(x),
                                                  differences = sum(x), 
                                                  total       = length(x)))
-      each      <- aggregate(pairwise[ , c("error")],
+        each    <- aggregate(pairwise[ , c("error")],
                              by  = list(pairwise[[group.id]],
                                         pairwise$variable),
                              FUN = function(x) c(error.rate  = mean(x),
                                                  differences = sum(x), 
                                                  total       = length(x)))
+      }
       # Name the columns
-      summary        <- as.data.frame(as.list(summary))
-      each           <- as.data.frame(as.list(each))
+      summary <- as.data.frame(as.list(summary))
+
+      if (!is.na(group.id)) {
+        each        <- as.data.frame(as.list(each))
+        names(each) <- c(group.id, "variable", "error.rate", "differences", "total")
+      }
+
       names(summary) <- c(group.id, "error.rate", "differences", "total")
-      names(each)    <- c(group.id, "variable", "error.rate", "differences", "total")
 
       # Export results
       results.by.group$summary <- summary

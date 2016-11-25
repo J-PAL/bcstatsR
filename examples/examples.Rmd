@@ -1,0 +1,17 @@
+---
+title: "Example usage of bcstats"
+output: rmarkdown::github_document
+---
+
+Let's apply `bcstats` in a few examples.
+
+## Toy example
+First, consider the following minimal working example. `bcstats` comes with two example two data sets. The following lines of code loads the library and attaches the data to your working environment.
+
+```{r}
+library(bcstats)
+load(survey)
+load(bc)
+```
+
+

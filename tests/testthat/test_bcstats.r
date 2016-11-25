@@ -8,15 +8,20 @@
 #   t2vars(gameresult)             ///
 #   t3vars(itemssold)              ///
 #   enumerator(enum)               ///
+#   enumteam(enumteam)             ///
+#   backchecker(bcer)              ///
 #   replace
 
-result <- bcstats(surveydata = survey,
-                  bcdata     = bc,
-                  id         = "id",
-                  t1vars     = "gender",
-                  t2vars     = "gameresult",
-                  t3vars     = "itemssold",
-                  enumerator = "enum")
+result <- bcstats(surveydata  = survey,
+                  bcdata      = bc,
+                  id          = "id",
+                  t1vars      = "gender",
+                  t2vars      = "gameresult",
+                  t3vars      = "itemssold",
+                  enumerator  = "enum",
+                  enumteam    = "enumteam",
+                  backchecker = "bcer",
+                  nodiff      = list(gameresult = 10))
 
 stata_raw <- 'id,enum,type,variable,survey,back_check
               5,"dean","type 1","gender","female","."
