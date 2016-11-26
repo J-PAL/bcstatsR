@@ -102,7 +102,7 @@ bcstats <- function(surveydata,
     if (!is.na(nodiff)) {
       for (name in names(nodiff)) {
         pairwise$error[(pairwise$variable == name &
-                        pairwise$value.survey %in% nodiff[[name]])] <- TRUE
+                        pairwise$value.survey %in% nodiff[[name]])] <- FALSE
       }
     }
 
