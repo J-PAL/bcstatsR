@@ -4,23 +4,51 @@
 \alias{bcstats}
 \title{Comparing "back checks" in R (a clone of Stata's bcstats)}
 \usage{
-bcstats(surveydata, bcdata, id, t1vars = NA, t2vars = NA, t3vars = NA)
+bcstats(surveydata, bcdata, id, enumerator = NA, enumteam = NA,
+  backchecker = NA, bcteam = NA, t1vars = NA, t2vars = NA,
+  t3vars = NA, ttest = NA, level = 0.95, signrank = NA, lower = FALSE,
+  upper = FALSE, nosymbol = FALSE, trim = FALSE, okrange = NA,
+  nodiff = NA, exclude = NA)
 }
 \arguments{
 \item{surveydata}{The survey data}
 
 \item{bcdata}{The back check data}
 
-\item{id}{the unique ID}
+\item{id}{The unique ID}
+
+\item{enumerator}{Display enumerators with high error rates and variables with high error rates for those enumerators}
+
+\item{enumteam}{Display the overall error rates of all enumerator teams}
 
 \item{t1vars}{The list of "type 1" variables}
 
 \item{t2vars}{The list of "type 2" variables}
 
 \item{t3vars}{The list of "type 3" variables}
+
+\item{ttest}{Run paired two-sample mean-comparison tests for varlist in the back check and survey data using ttest}
+
+\item{level}{Set confidence level for ttest; default is 0.95}
+
+\item{signrank}{Run Wilcoxon matched-pairs signed-ranks tests in the back check and survey data using signrank}
+
+\item{lower}{Convert all string variables to lower case before comparing}
+
+\item{upper}{Convert all string variables to upper case before comparing}
+
+\item{nosymbol}{Replace symbols with spaces in string variables before comparing}
+
+\item{trim}{Remove leading or trailing blanks and multiple, consecutive internal blanks in string variables before comparing}
+
+\item{okrange}{Do not count a value in list in the back check data as a difference if it falls within range of the survey data}
+
+\item{nodiff}{do not compare back check responses that equal # (for numeric variables) or string (for string variables)}
+
+\item{exclude}{Specifies that back check responses that equal values in list will not be compared. These responses will not affect error rates and will not appear in the comparisons data set.  Used when the back check data set contains data for multiple back check survey versions.}
 }
 \value{
-A data.frame with the error rates
+A named list constaining the back check as a data.frame, error rates by groups, and tests for differences
 }
 \description{
 Comparing "back checks" in R (a clone of Stata's bcstats)

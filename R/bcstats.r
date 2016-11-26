@@ -19,6 +19,7 @@
 #' @param nodiff  do not compare back check responses that equal # (for numeric variables) or string (for string variables)
 #' @param exclude Specifies that back check responses that equal values in list will not be compared. These responses will not affect error rates and will not appear in the comparisons data set.  Used when the back check data set contains data for multiple back check survey versions. 
 #' @return A named list constaining the back check as a data.frame, error rates by groups, and tests for differences
+#' @export
 
 bcstats <- function(surveydata,
                     bcdata,
@@ -238,13 +239,12 @@ bcstats <- function(surveydata,
       }
       # Name the columns
       summary <- as.data.frame(as.list(summary))
+      names(summary) <- c(group.id, "error.rate", "differences", "total")
 
       if (!is.na(group.id)) {
         each        <- as.data.frame(as.list(each))
         names(each) <- c(group.id, "variable", "error.rate", "differences", "total")
       }
-
-      names(summary) <- c(group.id, "error.rate", "differences", "total")
 
       # Export results
       results.by.group$summary <- summary

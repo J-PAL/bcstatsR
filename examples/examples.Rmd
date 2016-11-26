@@ -6,12 +6,69 @@ output: rmarkdown::github_document
 Let's apply `bcstats` in a few examples.
 
 ## Toy example
-First, consider the following minimal working example. `bcstats` comes with two example two data sets. The following lines of code loads the library and attaches the data to your working environment.
+First, consider the following minimal working example. `bcstats` comes with two example two data sets. Load the library to get started.
 
-```{r}
-library(bcstats)
-load(survey)
-load(bc)
+```{r, message = FALSE, warning = FALSE}
+library(bcstatsR)
 ```
 
+And then load the two datasets that come bundled with the library.
+```{r}
+data(survey)
+data(bc)
+```
 
+Let's take a look at the survey data.
+```{r}
+library(knitr)
+kable(survey)
+```
+
+Now, take a look at the back check data (i.e., the follow up where highly trained surveyors interview the same households).
+
+```{r}
+kable(bc)
+```
+
+In this example, `gender`, `gameresult` and `itemssold` are the variables collected in both the survey and the back check. Note that `id` identifies the respondent in both the survey and the back check. In the survey, `enum` and `enumteam` tells us the surveyor and the team of the surveyor. We'll want to know whether or not these surveyors and teams collected the data correctly in the survey. Similarly, in the back check, we'll want to summarize the data by back checker to see if we notice unusual patterns.
+
+Now, let's run the back check!
+
+```{r}
+result <- bcstats(surveydata  = survey,
+                  bcdata      = bc,
+                  id          = "id",
+                  t1vars      = "gender",
+                  t2vars      = "gameresult",
+                  t3vars      = "itemssold",
+                  enumerator  = "enum",
+                  enumteam    = "enumteam",
+                  backchecker = "bcer")
+```
+
+And auto-magically, you've created a bunch of results stored in `result`. Let's take a look at back check, which has been stored in `back$check`.
+
+```{r}
+kable(result$backcheck)
+```
+
+Each row contains the difference between the survey and the back check by each household and variable. Cases where nothing changed have not been included in this data.frame. Now let's take a look at the error rates for Type 1 by each surveyor (enumerator).
+
+```{r}
+kable(result[["enum1"]]$summary)
+```
+
+We can also take at the error rate for each Type 1 variable by enumerator.
+```{r}
+kable(result[["enum1"]]$each)
+```
+
+And we can do the same thing for Type 2 variables.
+```{r}
+kable(result[["enum2"]]$summary)
+kable(result[["enum2"]]$each)
+```
+
+Check out all the features of `bcstats` in the help page.
+```{r}
+help(bcstats)
