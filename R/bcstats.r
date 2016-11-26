@@ -120,7 +120,7 @@ bcstats <- function(surveydata,
     bid_vars <- c(id, backchecker, bcteam)
     sid_vars <- sid_vars[!is.na(sid_vars)]
     bid_vars <- bid_vars[!is.na(bid_vars)]
-    id_vars  <- c(sid_vars, bid_vars)
+    id_vars  <- unique(c(sid_vars, bid_vars))
 
     # Merge back in identifiers
     pairwise <- merge(pairwise,
