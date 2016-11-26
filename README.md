@@ -60,3 +60,4 @@ You should see a list of all the differences
 26 14  rohit Type 1     gender       female                 
 ```
 
+For more information on the features available with `bcstats` check out the [examples page](examples/examples.md)
