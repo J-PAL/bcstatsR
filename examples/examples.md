@@ -259,7 +259,7 @@ result <- bcstats(surveydata  = survey,
                   okrange     = list(itemssold = c(0, 5)))
 ```
 
-or excluded them all together
+or exclude them all together.
 
 ``` r
 result <- bcstats(surveydata  = survey,
