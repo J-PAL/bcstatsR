@@ -69,6 +69,54 @@ kable(result[["enum2"]]$summary)
 kable(result[["enum2"]]$each)
 ```
 
+Now let's redo the back check where this time we do a t-test for the differences between the survey data and the back check.
+```{r}
+result <- bcstats(surveydata  = survey,
+                  bcdata      = bc,
+                  id          = "id",
+                  t1vars      = "gender",
+                  t2vars      = "gameresult",
+                  t3vars      = "itemssold",
+                  enumerator  = "enum",
+                  enumteam    = "enumteam",
+                  backchecker = "bcer",
+                  ttest       = "itemssold")
+```
+
+You can find the results for the t-test as an element of the results list.
+```{r}
+print(results[["ttest"]]$itemssold)
+```
+
+We could have choosen to not code some changes as errors as follows,
+```{r}
+result <- bcstats(surveydata  = survey,
+                  bcdata      = bc,
+                  id          = "id",
+                  t1vars      = "gender",
+                  t2vars      = "gameresult",
+                  t3vars      = "itemssold",
+                  enumerator  = "enum",
+                  enumteam    = "enumteam",
+                  backchecker = "bcer",
+                  nodiff      = list(itemssold = c(0))
+```
+
+or excluded them all together
+```{r}
+result <- bcstats(surveydata  = survey,
+                  bcdata      = bc,
+                  id          = "id",
+                  t1vars      = "gender",
+                  t2vars      = "gameresult",
+                  t3vars      = "itemssold",
+                  enumerator  = "enum",
+                  enumteam    = "enumteam",
+                  backchecker = "bcer",
+                  exclude     = list(itemssold = c(0))
+```
+
 Check out all the features of `bcstats` in the help page.
 ```{r}
 help(bcstats)
+```
