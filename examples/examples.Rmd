@@ -85,7 +85,7 @@ result <- bcstats(surveydata  = survey,
 
 You can find the results for the t-test as an element of the results list.
 ```{r}
-print(results[["ttest"]]$itemssold)
+print(result[["ttest"]]$itemssold)
 ```
 
 We could have choosen to not code some changes as errors as follows,
@@ -99,7 +99,7 @@ result <- bcstats(surveydata  = survey,
                   enumerator  = "enum",
                   enumteam    = "enumteam",
                   backchecker = "bcer",
-                  nodiff      = list(itemssold = c(0))
+                  nodiff      = list(itemssold = c(0)))
 ```
 
 or excluded them all together
@@ -113,7 +113,7 @@ result <- bcstats(surveydata  = survey,
                   enumerator  = "enum",
                   enumteam    = "enumteam",
                   backchecker = "bcer",
-                  exclude     = list(itemssold = c(0))
+                  exclude     = list(itemssold = c(0)))
 ```
 
 Check out all the features of `bcstats` in the help page.

@@ -196,6 +196,69 @@ kable(result[["enum2"]]$each)
 | mateo  | gameresult |         1.0|            1|      1|
 | rohit  | gameresult |         1.0|            1|      1|
 
+Now let's redo the back check where this time we do a t-test for the differences between the survey data and the back check.
+
+``` r
+result <- bcstats(surveydata  = survey,
+                  bcdata      = bc,
+                  id          = "id",
+                  t1vars      = "gender",
+                  t2vars      = "gameresult",
+                  t3vars      = "itemssold",
+                  enumerator  = "enum",
+                  enumteam    = "enumteam",
+                  backchecker = "bcer",
+                  ttest       = "itemssold")
+```
+
+You can find the results for the t-test as an element of the results list.
+
+``` r
+print(result[["ttest"]]$itemssold)
+```
+
+    ## 
+    ##  Paired t-test
+    ## 
+    ## data:  as.numeric(pairwise.var$value.survey) and as.numeric(pairwise.var$value.backcheck)
+    ## t = -2.0656, df = 6, p-value = 0.0844
+    ## alternative hypothesis: true difference in means is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -2.4966927  0.2109784
+    ## sample estimates:
+    ## mean of the differences 
+    ##               -1.142857
+
+We could have choosen to not code some changes as errors as follows,
+
+``` r
+result <- bcstats(surveydata  = survey,
+                  bcdata      = bc,
+                  id          = "id",
+                  t1vars      = "gender",
+                  t2vars      = "gameresult",
+                  t3vars      = "itemssold",
+                  enumerator  = "enum",
+                  enumteam    = "enumteam",
+                  backchecker = "bcer",
+                  nodiff      = list(itemssold = c(0)))
+```
+
+or excluded them all together
+
+``` r
+result <- bcstats(surveydata  = survey,
+                  bcdata      = bc,
+                  id          = "id",
+                  t1vars      = "gender",
+                  t2vars      = "gameresult",
+                  t3vars      = "itemssold",
+                  enumerator  = "enum",
+                  enumteam    = "enumteam",
+                  backchecker = "bcer",
+                  exclude     = list(itemssold = c(0)))
+```
+
 Check out all the features of `bcstats` in the help page.
 
 ``` r
