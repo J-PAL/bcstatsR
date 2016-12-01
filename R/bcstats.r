@@ -124,15 +124,19 @@ bcstats <- function(surveydata,
     id_vars  <- unique(c(sid_vars, bid_vars))
 
     # Merge back in identifiers
-    pairwise <- merge(pairwise,
-                      surveydata[, sid_vars],
-                      all = FALSE,
-                      by  = id)
-
-    pairwise <- merge(pairwise,
-                      bcdata[, bid_vars],
-                      all = FALSE,
-                      by  = id)
+    if (length(sid_vars) > 1) {
+      pairwise <- merge(pairwise,
+                        surveydata[, sid_vars],
+                        all = FALSE,
+                        by  = id)
+    }
+    
+    if (length(bid_vars) > 1) {
+      pairwise <- merge(pairwise,
+                        bcdata[, bid_vars],
+                        all = FALSE,
+                        by  = id)
+    }
 
     # Restrict the data to cases where there is an error
     backcheck           <- pairwise[which(pairwise$error == TRUE),
