@@ -5,12 +5,12 @@ This package attempts to replicate the features of the Stata command [`bcstats`]
 
 ### Installation
 Using the R package [`devtools`](https://www.rstudio.com/products/rpackages/devtools/), you can easily install `bcstatsR`.
-```
+```{r}
 devtools::install_github('vikjam/bcstatsR')
 ```
 
 ### Use
-```
+```{r}
 # Load bcstatsR
 library(bcstatsR)
 
@@ -30,7 +30,7 @@ compute.bc <- bcstats(surveydata = survey,
 print(compute.bc$backcheck)
 ```
 You should see a list of all the differences 
-```
+```{r}
    id   enum   type   variable value.survey value.backcheck
 1   1   hana Type 2 gameresult           10            <NA>
 2   2   mark Type 1     gender       female                
