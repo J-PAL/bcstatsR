@@ -23,7 +23,7 @@ result <- bcstats(surveydata  = survey,
                   backchecker = "bcer",
                   nodiff      = list(gameresult = 10))
 
-stata_raw <- 'id,enum,type,variable,value.survey,value.back_check
+stata_raw <- 'id,enum,type,variable,survey,back_check
               5,"dean","type 1","gender","female","."
               7,"dean","type 1","gender","female","."
               6,"annie","type 1","gender",".","male"
@@ -51,15 +51,11 @@ stata_raw <- 'id,enum,type,variable,value.survey,value.back_check
               12,"hana","type 3","itemssold","3","6"
               13,"mateo","type 3","itemssold","1","."'
 
-stata_result = read.csv(text = stata_raw, row.names = NULL, na.strings = c('.', ''),
-  stringsAsFactors = FALSE)
+csv.con         <- textConnection(stata_raw)
+stata.backcheck <- read.csv(csv.con,
+                            quote            = "",
+                            stringsAsFactors = FALSE)
+close(csv.con)
 
-# Try to give the R and Staa results the same order
-stata_result = stata_result[with(stata_result, order(id, enum, type)), ]
-result$backcheck = result$backcheck[with(result$backcheck, order(id, enum, type)), ]
-
-# Compare them on common columns
-comparison_cols = c('id', 'enum', 'type', 'variable')
-expect_equal(
-  stata_result[, comparison_cols],
-  result$backcheck[, comparison_cols])
+compare(stata.backcheck,
+        result$backcheck, equal = TRUE)
