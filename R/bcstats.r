@@ -84,9 +84,6 @@ bcstats <- function(surveydata,
     pairwise$error <- pairwise$value.survey != pairwise$value.backcheck
     pairwise$error <- !(pairwise$error %in% FALSE)
 
-    # Type 3 variables do not have errors
-    pairwise$error[pairwise$type == "Type 3"] <- FALSE
-
     # No error for variables within okrange
     if (!is.na(okrange)) {
       for (name in names(okrange)) {
@@ -155,6 +152,9 @@ bcstats <- function(surveydata,
                                        "variable",
                                        "value.survey",
                                        "value.backcheck")]
+
+    # Remove Type 3 variables from error calculations that follow
+    pairwise$error[pairwise$type == "Type 3"] <- FALSE
 
     groups <- list(enum1        = c(enumerator,  is.na(t1vars), "Type 1"),
                    enum2        = c(enumerator,  is.na(t2vars), "Type 2"),
