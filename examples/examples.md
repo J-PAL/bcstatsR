@@ -110,19 +110,29 @@ kable(result$backcheck)
 |   id| enum   |  enumteam| bcer    | type   | variable   | value.survey | value.backcheck |
 |----:|:-------|---------:|:--------|:-------|:-----------|:-------------|:----------------|
 |    1| hana   |         3| wendy   | Type 2 | gameresult | 10           | NA              |
+|    1| hana   |         3| wendy   | Type 3 | itemssold  | 2            | NA              |
 |    2| mark   |         1| wendy   | Type 1 | gender     | female       |                 |
+|    2| mark   |         1| wendy   | Type 3 | itemssold  | 7            | 10              |
 |    3| lisa   |         2| rebecca | Type 2 | gameresult | 12           | NA              |
+|    3| lisa   |         2| rebecca | Type 3 | itemssold  | 1            | NA              |
 |    4| ife    |         2| wendy   | Type 2 | gameresult | 10           | NA              |
+|    4| ife    |         2| wendy   | Type 3 | itemssold  | 5            | NA              |
 |    5| dean   |         1| wendy   | Type 1 | gender     | female       |                 |
+|    5| dean   |         1| wendy   | Type 3 | itemssold  | 3            | 5               |
 |    6| annie  |         1| wendy   | Type 2 | gameresult | 10           | NA              |
 |    6| annie  |         1| wendy   | Type 1 | gender     |              | male            |
+|    6| annie  |         1| wendy   | Type 3 | itemssold  | 7            | NA              |
 |    7| dean   |         1| wendy   | Type 1 | gender     | female       |                 |
 |    8| annie  |         1| wendy   | Type 2 | gameresult | 7            | NA              |
+|    8| annie  |         1| wendy   | Type 3 | itemssold  | 3            | NA              |
 |    9| brooke |         2| wendy   | Type 1 | gender     | female       |                 |
 |   10| brooke |         2| rebecca | Type 2 | gameresult | 14           | NA              |
+|   10| brooke |         2| rebecca | Type 3 | itemssold  | 1            | NA              |
 |   11| lisa   |         2| wendy   | Type 1 | gender     | female       |                 |
 |   12| hana   |         3| wendy   | Type 1 | gender     | female       |                 |
+|   12| hana   |         3| wendy   | Type 3 | itemssold  | 3            | 6               |
 |   13| mateo  |         3| rebecca | Type 2 | gameresult | 14           | NA              |
+|   13| mateo  |         3| rebecca | Type 3 | itemssold  | 1            | NA              |
 |   14| rohit  |         3| rebecca | Type 2 | gameresult | 11           | 14              |
 |   14| rohit  |         3| rebecca | Type 1 | gender     | female       |                 |
 
