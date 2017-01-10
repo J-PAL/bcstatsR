@@ -1,61 +1,58 @@
-
 # Test against Stata equivalent
-# bcstats,                         ///
-#   surveydata(bcstats_survey.dta) ///
-#   bcdata(bcstats_bc.dta)         ///
-#   id(id)                         ///
-#   t1vars(gender)                 ///
-#   t2vars(gameresult)             ///
-#   t3vars(itemssold)              ///
-#   enumerator(enum)               ///
-#   enumteam(enumteam)             ///
-#   backchecker(bcer)              ///
-#   replace
+data(survey, bc)
+r.result  <- bcstats(surveydata  = survey,
+                     bcdata      = bc,
+                     id          = "id",
+                     t1vars      = "gender",
+                     t2vars      = "gameresult",
+                     t3vars      = "itemssold",
+                     enumerator  = "enum",
+                     enumteam    = "enumteam",
+                     backchecker = "bcer")
 
-result <- bcstats(surveydata  = survey,
-                  bcdata      = bc,
-                  id          = "id",
-                  t1vars      = "gender",
-                  t2vars      = "gameresult",
-                  t3vars      = "itemssold",
-                  enumerator  = "enum",
-                  enumteam    = "enumteam",
-                  backchecker = "bcer",
-                  nodiff      = list(gameresult = 10))
+test_that("backcheck have equal values", {
+  # Extract back check from bcstats
+  r.bc_base <- r.result[["backcheck"]]
 
-stata_raw <- 'id,enum,type,variable,survey,back_check
-              5,"dean","type 1","gender","female","."
-              7,"dean","type 1","gender","female","."
-              6,"annie","type 1","gender",".","male"
-              2,"mark","type 1","gender","female","."
-              9,"brooke","type 1","gender","female","."
-              11,"lisa","type 1","gender","female","."
-              12,"hana","type 1","gender","female","."
-              14,"rohit","type 1","gender","female","."
-              6,"annie","type 2","gameresult","10","."
-              8,"annie","type 2","gameresult","7","."
-              4,"ife","type 2","gameresult","10","."
-              10,"brooke","type 2","gameresult","14","."
-              3,"lisa","type 2","gameresult","12","."
-              1,"hana","type 2","gameresult","10","."
-              13,"mateo","type 2","gameresult","14","."
-              14,"rohit","type 2","gameresult","11","14"
-              5,"dean","type 3","itemssold","3","5"
-              6,"annie","type 3","itemssold","7","."
-              8,"annie","type 3","itemssold","3","."
-              2,"mark","type 3","itemssold","7","10"
-              4,"ife","type 3","itemssold","5","."
-              10,"brooke","type 3","itemssold","1","."
-              3,"lisa","type 3","itemssold","1","."
-              1,"hana","type 3","itemssold","2","."
-              12,"hana","type 3","itemssold","3","6"
-              13,"mateo","type 3","itemssold","1","."'
+  # Load backcheck results from test_bcstats.do
+  stata.bc_base <- read.csv("bc_base.csv",
+                            stringsAsFactors = FALSE,
+                            row.names        = NULL,
+                            na.strings       = c('.', NA))
+  # Rename Stata columns to match R
+  dplyr::rename(stata.bc_base,
+                value.survey    = survey,
+                value.backcheck = back_check)
+  # Reorder for comparison
+  stata.bc_base <- stata.bc_base[with(stata.bc_base, order(id, enum, type)), ]
+  r.bc_base     <- r.bc_base[with(r.bc_base, order(id, enum, type)), ]
+  # Test for equivalence
+  expect_equivalent(stata.bc_base, r.bc_base)
+})
 
-csv.con         <- textConnection(stata_raw)
-stata.backcheck <- read.csv(csv.con,
-                            quote            = "",
-                            stringsAsFactors = FALSE)
-close(csv.con)
+# Load enum1 resuts from test_bcstats.do
+enum1_base     <- read.csv("enum1_base.tsv", sep = "\t", stringsAsFactors = FALSE)
+enum2_base     <- read.csv("enum2_base.tsv", sep = "\t", stringsAsFactors = FALSE)
+enumteam1_base <- read.csv("enumteam1_base.tsv", sep = "\t", stringsAsFactors = FALSE)
+enumteam2_base <- read.csv("enumteam2_base.tsv", sep = "\t", stringsAsFactors = FALSE)
 
-compare(stata.backcheck,
-        result$backcheck, equal = TRUE)
+test_that("enum1 have equal values", {
+  enum1_merged <- merge(r.result[["enum1"]]$summary,
+                        enum1_base,
+                        by = "enum")
+     dplyr::rename(enum1_merged,
+                   r.error.rate = error.rate,
+                   stata.error.rate = error_rate)
+     expect_equal(enum1_merged$error.rate, enum1_merged$error_rate)
+})
+
+test_that("enum2 have equal values", {
+     enum2_merged <- merge(r.result[["enum2"]]$summary,
+                           enum2_base,
+                           by = "enum")
+     dplyr::rename(enum2_merged,
+                   r.error.rate = error.rate,
+                   stata.error.rate = error_rate)
+     expect_equal(enum2_merged$error.rate, enum2_merged$error_rate)
+})
+

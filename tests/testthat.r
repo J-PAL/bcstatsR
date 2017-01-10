@@ -1,6 +1,6 @@
 library(testthat)
 library(bcstatsR)
-library(compare)
+require(dplyr)
 
 test_check("bcstatsR")
 
