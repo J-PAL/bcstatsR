@@ -3,22 +3,46 @@
 #' @param surveydata The survey data
 #' @param bcdata The back check data
 #' @param id The unique ID
-#' @param enumerator Display enumerators with high error rates and variables with high error rates for those enumerators
+#' @param enumerator Display enumerators with high error rates and variables
+#' with high error rates for those enumerators
 #' @param enumteam Display the overall error rates of all enumerator teams
-#' @param t1vars The list of "type 1" variables
-#' @param t2vars The list of "type 2" variables
-#' @param t3vars The list of "type 3" variables
-#' @param ttest Run paired two-sample mean-comparison tests for varlist in the back check and survey data using ttest
+#' @param t1vars The list of "type 1" variables. See details.
+#' @param t2vars The list of "type 2" variables. See details.
+#' @param t3vars The list of "type 3" variables. See details.
+#' @param ttest Run paired two-sample mean-comparison tests for varlist in the
+#' back check and survey data using ttest
 #' @param level Set confidence level for ttest; default is 0.95
-#' @param signrank Run Wilcoxon matched-pairs signed-ranks tests in the back check and survey data using signrank
+#' @param signrank Run Wilcoxon matched-pairs signed-ranks tests in the back
+#' check and survey data using signrank
 #' @param lower Convert all string variables to lower case before comparing
 #' @param upper Convert all string variables to upper case before comparing
-#' @param nosymbol Replace symbols with spaces in string variables before comparing
-#' @param trim Remove leading or trailing blanks and multiple, consecutive internal blanks in string variables before comparing
-#' @param okrange Do not count a value in list in the back check data as a difference if it falls within range of the survey data
-#' @param nodiff  do not compare back check responses that equal # (for numeric variables) or string (for string variables)
-#' @param exclude Specifies that back check responses that equal values in list will not be compared. These responses will not affect error rates and will not appear in the comparisons data set.  Used when the back check data set contains data for multiple back check survey versions. 
-#' @return A named list constaining the back check as a data.frame, error rates by groups, and tests for differences
+#' @param nosymbol Replace symbols with spaces in string variables before
+#' comparing
+#' @param trim Remove leading or trailing blanks and multiple, consecutive
+#' internal blanks in string variables before comparing
+#' @param okrange Do not count a value in list in the back check data as a
+#' difference if it falls within range of the survey data
+#' @param nodiff Do not compare back check responses that equal # (for numeric
+#' variables) or string (for string variables)
+#' @param exclude Specifies that back check responses that equal values in list
+#' will not be compared. These responses will not affect error rates and will
+#' not appear in the comparisons data set.  Used when the back check data set
+#' contains data for multiple back check survey versions. 
+#' @return A named list constaining the back check as a data.frame, error rates
+#' by groups, and tests for differences
+#' @details
+#' Variable types:
+#' \itemize{
+#' \item Type 1 variables are expected to stay constant between the survey and
+#' back check, and differences may result in action against the enumerator.
+#' \item Type 2 variables may be difficult for enumerators to administer. For
+#' instance, they may involve complicated skip patterns or many examples.
+#' Differences may indicate the need for further training, but will not result
+#' in action against the enumerator.
+#' \item Type 3 variables are variables whose stability between the survey and
+#' back check is of interest. Differences will not result in action against the
+#' enumerator.
+#' }
 #' @export
 
 bcstats <- function(surveydata,
