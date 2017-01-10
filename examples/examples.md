@@ -33,7 +33,7 @@ kable(survey)
 |    3| 16may2011 | lisa   |         2| female |          12|          1|
 |    4| 13jun2011 | ife    |         2| female |          10|          5|
 |    5| 10jun2011 | dean   |         1| female |          12|          3|
-|    6| 17may2011 | annie  |         1|        |          10|          7|
+|    6| 17may2011 | annie  |         1| NA     |          10|          7|
 |    7| 07jul2011 | dean   |         1| female |          14|          1|
 |    8| 16jun2011 | annie  |         1| female |           7|          3|
 |    9| 14jul2011 | brooke |         2| female |          10|          3|
@@ -51,7 +51,7 @@ kable(survey)
 |   21| 09may2011 | ife    |         2| female |          12|          7|
 |   22| 06apr2011 | brooke |         2| female |          10|          3|
 |   23| 07jun2011 | annie  |         1| female |           9|          2|
-|   24| 01apr2011 | annie  |         1|        |           9|          5|
+|   24| 01apr2011 | annie  |         1| NA     |           9|          5|
 |   25| 18may2011 | hana   |         3| female |          10|          6|
 |   26| 12may2011 | hana   |         3| female |           9|          4|
 |   27| 31may2011 | mark   |         1| female |           9|          3|
@@ -71,19 +71,19 @@ kable(bc)
 |   id| date      | bcer    | gender |  gameresult|  itemssold|
 |----:|:----------|:--------|:-------|-----------:|----------:|
 |    1| 18apr2011 | wendy   | female |          NA|         NA|
-|    2| 18apr2011 | wendy   |        |           9|         10|
+|    2| 18apr2011 | wendy   | NA     |           9|         10|
 |    3| 17may2011 | rebecca | female |          NA|         NA|
 |    4| 14jun2011 | wendy   | female |          NA|         NA|
-|    5| 13jun2011 | wendy   |        |          12|          5|
+|    5| 13jun2011 | wendy   | NA     |          12|          5|
 |    6| 18may2011 | wendy   | male   |          NA|         NA|
-|    7| 08jul2011 | wendy   |        |          14|          1|
+|    7| 08jul2011 | wendy   | NA     |          14|          1|
 |    8| 17jun2011 | wendy   | female |          NA|         NA|
-|    9| 15jul2011 | wendy   |        |          10|          3|
+|    9| 15jul2011 | wendy   | NA     |          10|          3|
 |   10| 26jul2011 | rebecca | female |          NA|         NA|
-|   11| 17jun2011 | wendy   |        |          14|          1|
-|   12| 14jun2011 | wendy   |        |           9|          6|
+|   11| 17jun2011 | wendy   | NA     |          14|          1|
+|   12| 14jun2011 | wendy   | NA     |           9|          6|
 |   13| 22jul2011 | rebecca | female |          NA|         NA|
-|   14| 16aug2011 | rebecca |        |          14|          1|
+|   14| 16aug2011 | rebecca | NA     |          14|          1|
 
 In this example, `gender`, `gameresult` and `itemssold` are the variables collected in both the survey and the back check. Note that `id` identifies the respondent in both the survey and the back check. In the survey, `enum` and `enumteam` tells us the surveyor and the team of the surveyor. We'll want to know whether or not these surveyors and teams collected the data correctly in the survey. Similarly, in the back check, we'll want to summarize the data by back checker to see if we notice unusual patterns.
 
@@ -109,32 +109,32 @@ kable(result$backcheck)
 
 |   id| enum   |  enumteam| bcer    | type   | variable   | value.survey | value.backcheck |
 |----:|:-------|---------:|:--------|:-------|:-----------|:-------------|:----------------|
-|    1| hana   |         3| wendy   | Type 2 | gameresult | 10           | NA              |
-|    1| hana   |         3| wendy   | Type 3 | itemssold  | 2            | NA              |
-|    2| mark   |         1| wendy   | Type 1 | gender     | female       |                 |
-|    2| mark   |         1| wendy   | Type 3 | itemssold  | 7            | 10              |
-|    3| lisa   |         2| rebecca | Type 2 | gameresult | 12           | NA              |
-|    3| lisa   |         2| rebecca | Type 3 | itemssold  | 1            | NA              |
-|    4| ife    |         2| wendy   | Type 2 | gameresult | 10           | NA              |
-|    4| ife    |         2| wendy   | Type 3 | itemssold  | 5            | NA              |
-|    5| dean   |         1| wendy   | Type 1 | gender     | female       |                 |
-|    5| dean   |         1| wendy   | Type 3 | itemssold  | 3            | 5               |
-|    6| annie  |         1| wendy   | Type 2 | gameresult | 10           | NA              |
-|    6| annie  |         1| wendy   | Type 1 | gender     |              | male            |
-|    6| annie  |         1| wendy   | Type 3 | itemssold  | 7            | NA              |
-|    7| dean   |         1| wendy   | Type 1 | gender     | female       |                 |
-|    8| annie  |         1| wendy   | Type 2 | gameresult | 7            | NA              |
-|    8| annie  |         1| wendy   | Type 3 | itemssold  | 3            | NA              |
-|    9| brooke |         2| wendy   | Type 1 | gender     | female       |                 |
-|   10| brooke |         2| rebecca | Type 2 | gameresult | 14           | NA              |
-|   10| brooke |         2| rebecca | Type 3 | itemssold  | 1            | NA              |
-|   11| lisa   |         2| wendy   | Type 1 | gender     | female       |                 |
-|   12| hana   |         3| wendy   | Type 1 | gender     | female       |                 |
-|   12| hana   |         3| wendy   | Type 3 | itemssold  | 3            | 6               |
-|   13| mateo  |         3| rebecca | Type 2 | gameresult | 14           | NA              |
-|   13| mateo  |         3| rebecca | Type 3 | itemssold  | 1            | NA              |
-|   14| rohit  |         3| rebecca | Type 2 | gameresult | 11           | 14              |
-|   14| rohit  |         3| rebecca | Type 1 | gender     | female       |                 |
+|    1| hana   |         3| wendy   | type 2 | gameresult | 10           | NA              |
+|    1| hana   |         3| wendy   | type 3 | itemssold  | 2            | NA              |
+|    2| mark   |         1| wendy   | type 1 | gender     | female       | NA              |
+|    2| mark   |         1| wendy   | type 3 | itemssold  | 7            | 10              |
+|    3| lisa   |         2| rebecca | type 2 | gameresult | 12           | NA              |
+|    3| lisa   |         2| rebecca | type 3 | itemssold  | 1            | NA              |
+|    4| ife    |         2| wendy   | type 2 | gameresult | 10           | NA              |
+|    4| ife    |         2| wendy   | type 3 | itemssold  | 5            | NA              |
+|    5| dean   |         1| wendy   | type 1 | gender     | female       | NA              |
+|    5| dean   |         1| wendy   | type 3 | itemssold  | 3            | 5               |
+|    6| annie  |         1| wendy   | type 2 | gameresult | 10           | NA              |
+|    6| annie  |         1| wendy   | type 1 | gender     | NA           | male            |
+|    6| annie  |         1| wendy   | type 3 | itemssold  | 7            | NA              |
+|    7| dean   |         1| wendy   | type 1 | gender     | female       | NA              |
+|    8| annie  |         1| wendy   | type 2 | gameresult | 7            | NA              |
+|    8| annie  |         1| wendy   | type 3 | itemssold  | 3            | NA              |
+|    9| brooke |         2| wendy   | type 1 | gender     | female       | NA              |
+|   10| brooke |         2| rebecca | type 2 | gameresult | 14           | NA              |
+|   10| brooke |         2| rebecca | type 3 | itemssold  | 1            | NA              |
+|   11| lisa   |         2| wendy   | type 1 | gender     | female       | NA              |
+|   12| hana   |         3| wendy   | type 1 | gender     | female       | NA              |
+|   12| hana   |         3| wendy   | type 3 | itemssold  | 3            | 6               |
+|   13| mateo  |         3| rebecca | type 2 | gameresult | 14           | NA              |
+|   13| mateo  |         3| rebecca | type 3 | itemssold  | 1            | NA              |
+|   14| rohit  |         3| rebecca | type 2 | gameresult | 11           | 14              |
+|   14| rohit  |         3| rebecca | type 1 | gender     | female       | NA              |
 
 Each row contains the difference between the survey and the back check by each household and variable. Cases where nothing changed have not been included in this data.frame. Now let's take a look at the error rates for Type 1 by each surveyor (enumerator).
 
