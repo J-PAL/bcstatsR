@@ -73,11 +73,13 @@ bcstats <- function(surveydata,
                       by       = c(id,        "variable"),
                       suffixes = c(".survey", ".backcheck"))
 
+    pairwise$variable <- as.character(pairwise$variable)
+
     # Categorize error types
     pairwise$type                                <- ""
-    pairwise$type[pairwise$variable %in% t1vars] <- "Type 1"
-    pairwise$type[pairwise$variable %in% t2vars] <- "Type 2"
-    pairwise$type[pairwise$variable %in% t3vars] <- "Type 3"
+    pairwise$type[pairwise$variable %in% t1vars] <- "type 1"
+    pairwise$type[pairwise$variable %in% t2vars] <- "type 2"
+    pairwise$type[pairwise$variable %in% t3vars] <- "type 3"
     pairwise                                     <- pairwise[which(pairwise$type != ""), ]
 
     # Create a logical value for whether or not the entry contains an error
@@ -153,17 +155,17 @@ bcstats <- function(surveydata,
                                        "value.survey",
                                        "value.backcheck")]
 
-    # Remove Type 3 variables from error calculations that follow
-    pairwise$error[pairwise$type == "Type 3"] <- FALSE
+    # Remove type 3 variables from error calculations that follow
+    pairwise$error[pairwise$type == "type 3"] <- FALSE
 
-    groups <- list(enum1        = c(enumerator,  is.na(t1vars), "Type 1"),
-                   enum2        = c(enumerator,  is.na(t2vars), "Type 2"),
-                   enumteam1    = c(enumteam,    is.na(t1vars), "Type 1"),
-                   enumteam2    = c(enumteam,    is.na(t2vars), "Type 2"),
-                   backchecker1 = c(backchecker, is.na(t1vars), "Type 1"),
-                   backchecker2 = c(backchecker, is.na(t2vars), "Type 2"),
-                   bcteam1      = c(bcteam,      is.na(t1vars), "Type 1"),
-                   bcteam2      = c(bcteam,      is.na(t2vars), "Type 2"))
+    groups <- list(enum1        = c(enumerator,  is.na(t1vars), "type 1"),
+                   enum2        = c(enumerator,  is.na(t2vars), "type 2"),
+                   enumteam1    = c(enumteam,    is.na(t1vars), "type 1"),
+                   enumteam2    = c(enumteam,    is.na(t2vars), "type 2"),
+                   backchecker1 = c(backchecker, is.na(t1vars), "type 1"),
+                   backchecker2 = c(backchecker, is.na(t2vars), "type 2"),
+                   bcteam1      = c(bcteam,      is.na(t1vars), "type 1"),
+                   bcteam2      = c(bcteam,      is.na(t2vars), "type 2"))
 
     for (name in names(groups)) {
       group.name  <- groups[[name]][1]
