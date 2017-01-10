@@ -58,7 +58,8 @@ not appear in the comparisons data set.  Used when the back check data set
 contains data for multiple back check survey versions.}
 }
 \value{
-A named list constaining the back check as a data.frame, error rates by groups, and tests for differences
+A named list constaining the back check as a data.frame, error rates
+by groups, and tests for differences
 }
 \description{
 Comparing "back checks" in R (a clone of Stata's bcstats)
@@ -66,9 +67,15 @@ Comparing "back checks" in R (a clone of Stata's bcstats)
 \details{
 Variable types:
 \itemize{
-\item Type 1 variables are expected to stay constant between the survey and back check, and differences may result in action against the enumerator.
-\item Type 2 variables may be difficult for enumerators to administer. For instance, they may involve complicated skip patterns or many examples. Differences may indicate the need for further training, but will not result in action against the enumerator.
-\item Type 3 variables are variables whose stability between the survey and back check is of interest. Differences will not result in action against the enumerator.
+\item Type 1 variables are expected to stay constant between the survey and
+back check, and differences may result in action against the enumerator.
+\item Type 2 variables may be difficult for enumerators to administer. For
+instance, they may involve complicated skip patterns or many examples.
+Differences may indicate the need for further training, but will not result
+in action against the enumerator.
+\item Type 3 variables are variables whose stability between the survey and
+back check is of interest. Differences will not result in action against the
+enumerator.
 }
 }
 
