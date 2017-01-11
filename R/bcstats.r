@@ -109,6 +109,7 @@ bcstats <- function(surveydata,
     # Create a logical value for whether or not the entry contains an error
     pairwise$error <- pairwise$value.survey != pairwise$value.backcheck
     pairwise$error <- !(pairwise$error %in% FALSE)
+    pairwise$error[is.na(pairwise$value.survey) & is.na(pairwise$value.backcheck)] <- FALSE
 
     # No error for variables within okrange
     if (!is.na(okrange)) {
