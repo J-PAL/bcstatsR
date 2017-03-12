@@ -19,15 +19,22 @@ data(bc)
 ```
 
 Let's take a look at the survey data.
-```{r}
-library(knitr)
-kable(survey)
+```{r, results = "hide"}
+print(survey)
+```
+
+```{r, echo = FALSE}
+knitr::kable(survey)
 ```
 
 Now, take a look at the back check data (i.e., the follow up where highly trained surveyors interview the same households).
 
-```{r}
-kable(bc)
+```{r, results = 'hide'}
+print(bc)
+```
+
+```{r, echo = FALSE}
+knitr::kable(bc)
 ```
 
 In this example, `gender`, `gameresult` and `itemssold` are the variables collected in both the survey and the back check. Note that `id` identifies the respondent in both the survey and the back check. In the survey, `enum` and `enumteam` tells us the surveyor and the team of the surveyor. We'll want to know whether or not these surveyors and teams collected the data correctly in the survey. Similarly, in the back check, we'll want to summarize the data by back checker to see if we notice unusual patterns.
@@ -48,25 +55,42 @@ result <- bcstats(surveydata  = survey,
 
 And auto-magically, you've created a bunch of results stored in `result`. Let's take a look at back check, which has been stored in `back$check`.
 
-```{r}
-kable(result$backcheck)
+```{r, results = 'hide'}
+print(result$backcheck)
+```
+
+```{r, echo = FALSE}
+knitr::kable(result$backcheck)
 ```
 
 Each row contains the difference between the survey and the back check by each household and variable. Cases where nothing changed have not been included in this data.frame. Now let's take a look at the error rates for Type 1 by each surveyor (enumerator).
 
-```{r}
-kable(result[["enum1"]]$summary)
+```{r, results = 'hide'}
+print(result[["enum1"]]$summary)
+```
+
+```{r, echo = FALSE}
+knitr::kable(result[["enum1"]]$summary)
 ```
 
 We can also take at the error rate for each Type 1 variable by enumerator.
-```{r}
-kable(result[["enum1"]]$each)
+```{r, results = 'hide'}
+print(result[["enum1"]]$each)
+```
+
+```{r, echo = FALSE}
+knitr::kable(result[["enum1"]]$each)
 ```
 
 And we can do the same thing for Type 2 variables.
-```{r}
-kable(result[["enum2"]]$summary)
-kable(result[["enum2"]]$each)
+```{r, results = 'hide'}
+print(result[["enum2"]]$summary)
+print(result[["enum2"]]$each)
+```
+
+```{r, echo = FALSE}
+knitr::kable(result[["enum2"]]$summary)
+knitr::kable(result[["enum2"]]$each)
 ```
 
 Now let's redo the back check where this time we do a t-test for the differences between the survey data and the back check.

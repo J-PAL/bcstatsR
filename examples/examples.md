@@ -22,8 +22,7 @@ data(bc)
 Let's take a look at the survey data.
 
 ``` r
-library(knitr)
-kable(survey)
+print(survey)
 ```
 
 |   id| date      | enum   |  enumteam| gender |  gameresult|  itemssold|
@@ -65,7 +64,7 @@ kable(survey)
 Now, take a look at the back check data (i.e., the follow up where highly trained surveyors interview the same households).
 
 ``` r
-kable(bc)
+print(bc)
 ```
 
 |   id| date      | bcer    | gender |  gameresult|  itemssold|
@@ -104,7 +103,7 @@ result <- bcstats(surveydata  = survey,
 And auto-magically, you've created a bunch of results stored in `result`. Let's take a look at back check, which has been stored in `back$check`.
 
 ``` r
-kable(result$backcheck)
+print(result$backcheck)
 ```
 
 |   id| enum   |  enumteam| bcer    | type   | variable   | value.survey | value.backcheck |
@@ -139,7 +138,7 @@ kable(result$backcheck)
 Each row contains the difference between the survey and the back check by each household and variable. Cases where nothing changed have not been included in this data.frame. Now let's take a look at the error rates for Type 1 by each surveyor (enumerator).
 
 ``` r
-kable(result[["enum1"]]$summary)
+print(result[["enum1"]]$summary)
 ```
 
 | enum   |  error.rate|  differences|  total|
@@ -157,7 +156,7 @@ kable(result[["enum1"]]$summary)
 We can also take at the error rate for each Type 1 variable by enumerator.
 
 ``` r
-kable(result[["enum1"]]$each)
+print(result[["enum1"]]$each)
 ```
 
 | enum   | variable |  error.rate|  differences|  total|
@@ -175,7 +174,8 @@ kable(result[["enum1"]]$each)
 And we can do the same thing for Type 2 variables.
 
 ``` r
-kable(result[["enum2"]]$summary)
+print(result[["enum2"]]$summary)
+print(result[["enum2"]]$each)
 ```
 
 | enum   |  error.rate|  differences|  total|
@@ -189,10 +189,6 @@ kable(result[["enum2"]]$summary)
 | mark   |         0.0|            0|      1|
 | mateo  |         1.0|            1|      1|
 | rohit  |         1.0|            1|      1|
-
-``` r
-kable(result[["enum2"]]$each)
-```
 
 | enum   | variable   |  error.rate|  differences|  total|
 |:-------|:-----------|-----------:|------------:|------:|
