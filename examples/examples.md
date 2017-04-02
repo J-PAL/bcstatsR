@@ -100,7 +100,7 @@ result <- bcstats(surveydata  = survey,
                   backchecker = "bcer")
 ```
 
-And auto-magically, you've created a bunch of results stored in `result`. Let's take a look at back check, which has been stored in `back$check`.
+And auto-magically, you've created a bunch of results stored in `result`. Let's take a look at back check, which has been stored in `result$backcheck`.
 
 ``` r
 print(result$backcheck)
@@ -135,7 +135,7 @@ print(result$backcheck)
 |   14| rohit  |         3| rebecca | type 2 | gameresult | 11           | 14              |
 |   14| rohit  |         3| rebecca | type 1 | gender     | female       | NA              |
 
-Each row contains the difference between the survey and the back check by each household and variable. Cases where nothing changed have not been included in this data.frame. Now let's take a look at the error rates for Type 1 by each surveyor (enumerator).
+Each row contains the difference between the survey and the back check by each household and variable. Cases where nothing changed have not been included in this data.frame. Now let's take a look at the error rates for Type 1 variables by each surveyor (enumerator).
 
 ``` r
 print(result[["enum1"]]$summary)
