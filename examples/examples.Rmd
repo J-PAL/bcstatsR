@@ -154,7 +154,23 @@ result <- bcstats(surveydata  = survey,
                   exclude     = list(itemssold = c(0)))
 ```
 
-Check out all the features of `bcstats` in the help page.
+## Multiple variables
+Of course, you'll want to check multiple variables within any given type. You can just pass those as variable names as a list. For example, if you want to run the back check with both `gender` and `gameresult` as Type 1 variables, you could do the following:
+```{r, results = 'hide'}
+result.mv <- bcstats(surveydata  = survey,
+                     bcdata      = bc,
+                     id          = "id",
+                     t1vars      = c("gender", "gameresult"),
+                     t3vars      = "itemssold",
+                     enumerator  = "enum",
+                     enumteam    = "enumteam",
+                     backchecker = "bcer",
+                     exclude     = list(itemssold = c(0)))
+```
+
+
+## Need help?
+Check out all the features of `bcstats` in the help page and post an [issue on GitHub](https://github.com/J-PAL/bcstatsR/issues) if you encounter any problems.
 ```{r}
 help(bcstats)
 ```
