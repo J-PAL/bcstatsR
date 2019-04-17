@@ -1,5 +1,5 @@
 #' Comparing "back checks" in R (a clone of Stata's bcstats)
-#' 
+#'
 #' @param surveydata The survey data
 #' @param bcdata The back check data
 #' @param id The unique ID
@@ -27,7 +27,7 @@
 #' @param exclude Specifies that back check responses that equal values in list
 #' will not be compared. These responses will not affect error rates and will
 #' not appear in the comparisons data set.  Used when the back check data set
-#' contains data for multiple back check survey versions. 
+#' contains data for multiple back check survey versions.
 #' @return A named list constaining the back check as a data.frame, error rates
 #' by groups, and tests for differences
 #' @details
@@ -154,7 +154,7 @@ bcstats <- function(surveydata,
                         all = FALSE,
                         by  = id)
     }
-    
+
     if (length(bid_vars) > 1) {
       pairwise <- merge(pairwise,
                         bcdata[, bid_vars],
@@ -183,14 +183,14 @@ bcstats <- function(surveydata,
     # Remove type 3 variables from error calculations that follow
     pairwise$error[pairwise$type == "type 3"] <- FALSE
 
-    groups <- list(enum1        = c(enumerator,  is.na(t1vars), "type 1"),
-                   enum2        = c(enumerator,  is.na(t2vars), "type 2"),
-                   enumteam1    = c(enumteam,    is.na(t1vars), "type 1"),
-                   enumteam2    = c(enumteam,    is.na(t2vars), "type 2"),
-                   backchecker1 = c(backchecker, is.na(t1vars), "type 1"),
-                   backchecker2 = c(backchecker, is.na(t2vars), "type 2"),
-                   bcteam1      = c(bcteam,      is.na(t1vars), "type 1"),
-                   bcteam2      = c(bcteam,      is.na(t2vars), "type 2"))
+    groups <- list(enum1        = c(enumerator,  all(is.na(t1vars)), "type 1"),
+                   enum2        = c(enumerator,  all(is.na(t2vars)), "type 2"),
+                   enumteam1    = c(enumteam,    all(is.na(t1vars)), "type 1"),
+                   enumteam2    = c(enumteam,    all(is.na(t2vars)), "type 2"),
+                   backchecker1 = c(backchecker, all(is.na(t1vars)), "type 1"),
+                   backchecker2 = c(backchecker, all(is.na(t2vars)), "type 2"),
+                   bcteam1      = c(bcteam,      all(is.na(t1vars)), "type 1"),
+                   bcteam2      = c(bcteam,      all(is.na(t2vars)), "type 2"))
 
     for (name in names(groups)) {
       group.name  <- groups[[name]][1]
@@ -205,7 +205,7 @@ bcstats <- function(surveydata,
                                                         group.id   = group.name,
                                                         error.type = group.error)
         results[[name]]$summary <- calc.error.by.group$summary
-        results[[name]]$each    <- calc.error.by.group$each        
+        results[[name]]$each    <- calc.error.by.group$each
       }
     }
 
@@ -218,7 +218,7 @@ bcstats <- function(surveydata,
             results$ttest[[var]] <- t.test(as.numeric(pairwise.var$value.survey),
                                            as.numeric(pairwise.var$value.backcheck),
                                            paired     = TRUE,
-                                           conf.level = level)    
+                                           conf.level = level)
         }
     }
 
@@ -230,7 +230,7 @@ bcstats <- function(surveydata,
             pairwise.var            <- pairwise[which(pairwise$variable == var),  ]
             results$signrank[[var]] <- wilcox.test(as.numeric(pairwise.var$value.survey),
                                                    as.numeric(pairwise.var$value.backcheck),
-                                                   paired = TRUE)    
+                                                   paired = TRUE)
         }
     }
 
@@ -253,19 +253,19 @@ bcstats <- function(surveydata,
         summary <- aggregate(pairwise[ , c("error")],
                              by  = list(pairwise$variable),
                              FUN = function(x) c(error.rate  = mean(x),
-                                                 differences = sum(x), 
+                                                 differences = sum(x),
                                                  total       = length(x)))
       } else {
         summary <- aggregate(pairwise[ , c("error")],
                              by  = list(pairwise[[group.id]]),
                              FUN = function(x) c(error.rate  = mean(x),
-                                                 differences = sum(x), 
+                                                 differences = sum(x),
                                                  total       = length(x)))
         each    <- aggregate(pairwise[ , c("error")],
                              by  = list(pairwise[[group.id]],
                                         pairwise$variable),
                              FUN = function(x) c(error.rate  = mean(x),
-                                                 differences = sum(x), 
+                                                 differences = sum(x),
                                                  total       = length(x)))
       }
       # Name the columns
@@ -339,4 +339,3 @@ bcstats <- function(surveydata,
     x
   }
 }
-
